@@ -1,6 +1,4 @@
 .main-nav {
-    margin-bottom: 30px;
-
     ul {
         padding: 0;
         margin: 0;
@@ -11,6 +9,9 @@
         background: @top-nav-bg;
         display: block;
 
+        .container {
+            width: 100%;
+        }
         .container > ul > li {
             display: inline-block;
             list-style: none;
@@ -226,6 +227,10 @@
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
+        .nav-element-right {
+            display: flex;
+            flex-direction: row;
+        }
     }
     .toggle-mobile-nav {
         float: right;

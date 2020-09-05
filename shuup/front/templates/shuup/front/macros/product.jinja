@@ -28,28 +28,38 @@ Inheritance order for product macors:
                 <span class="badge product-badge sale">{{ -(product|discount_rate(supplier=supplier))|percent }}</span>
             {% endif %}
             {% if show_image %}
-                {% set product_image = shop_product.public_primary_image or shop_product.public_images.first() %}
-                {% set primary_image_thumb = product_image|thumbnail(size=thumbnail_size) %}
+                {% set product_images = shop_product.public_images %}
+                {% set primary_image_thumb = shuup.product.get_thumbnail_image(product_images) %}
                 <div class="image-wrap">
-                    {% if product_image and primary_image_thumb %}
-                        {% set image_url = primary_image_thumb %}
-                    {% else %}
-                        {% set image_url = STATIC_URL ~ "shuup/front/img/no_image.png" %}
-                    {% endif %}
-                    <div class="image" style="background-image:url('{{ image_url }}')"></div>
+                    <div class="image" style="background-image:url('{{ primary_image_thumb[0] }}')"></div>
                 </div>
             {% endif %}
+            <script>
+                $("#product-{{ product.id }}").hover(function () {
+                    $(this).find(".image").css({
+                        "background-image": "url({{ primary_image_thumb[1] }})",
+                        "transition": "all 0.3s ease-in",
+                    })
+                }, function () {
+                    $(this).find(".image").css(
+                        {
+                            "background-image": "url({{ primary_image_thumb[0] }})",
+                        }
+                        )
+                })
+            </script>
             <div class="detail-wrap">
                 <div class="name">
                     {{ product.name }}
                 </div>
                 {% if show_supplier_info %}{{ render_supplier_info(supplier, render_link=False) }}{% endif %}
-                {% if shop_product and shop_product.available_until %}{{ render_availability_info(shop_product) }}{% endif %}
+                {% if shop_product and shop_product.available_until %}
+                    {{ render_availability_info(shop_product) }}{% endif %}
                 <div class="actions-wrap">
                     {% if show_prices() and not xtheme.get("hide_prices") %}
-                    <div class="price">
-                        {{ render_product_price(product, show_units=False, supplier=supplier) }}
-                    </div>
+                        <div class="price">
+                            {{ render_product_price(product, show_units=False, supplier=supplier) }}
+                        </div>
                     {% endif %}
                 </div>
                 {% if show_description and product.short_description %}
@@ -77,7 +87,7 @@ Inheritance order for product macors:
                     {% set (min_price, max_price) = product|price_range(per_qty, supplier=supplier) %}
                     {% if min_price == max_price %}
                         {% if product|is_discounted(supplier=supplier) -%}
-                        <small class="text-muted original-price original"><s>
+                            <small class="text-muted original-price original"><s>
                             {{- product|base_price(per_qty, supplier=supplier) -}}
                         </s></small>
                         {%- endif %}
@@ -144,7 +154,7 @@ Inheritance order for product macors:
 
 {% macro render_product_detail_ready(product) %}
     <script>
-        $(function() {
+        $(function () {
             updatePrice("{{ product.id }}");
         });
     </script>

@@ -1,4 +1,4 @@
-{# This template requires shuup.front static resources to setup the carousel of products using owl-carousel #}
+{# This template requires shuup.front static resources to setup the carousel of Fproducts using owl-carousel #}
 {%- from "shuup/front/macros/product.jinja" import product_box with context -%}
 {%- set cross_sell_products = shuup.product.get_product_cross_sells(
     product, type, count=count, orderable_only=orderable_only, use_variation_parents=use_variation_parents) %}

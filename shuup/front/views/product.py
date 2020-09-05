@@ -38,6 +38,7 @@ class ProductDetailView(DetailView):
         context.update(get_product_context(self.request, self.object, language, supplier))
         # TODO: Maybe add hook for ProductDetailView get_context_data?
         # dispatch_hook("get_context_data", view=self, context=context)
+        print(context)
         return context
 
     def get(self, request, *args, **kwargs):

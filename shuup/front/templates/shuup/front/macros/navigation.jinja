@@ -5,7 +5,6 @@
     <div class="top-nav">
         <div class="container">
             <ul class="pull-left">
-                {{ render_search() }}
                 {{ render_info_dropdown(show_quick_login) }}
                 {{ render_language_changer() }}
             </ul>
@@ -15,10 +14,14 @@
         </div>
     </div>
     <div class="bottom-nav">
-        <div class="container">
+        <div style="padding: 0 1em">
             <div class="nav-content">
                 {{ render_logo() }}
                 {{ render_menu_items() }}
+                <div class="nav-element-right">
+                    {{ render_search() }}
+                    {{ render_button_mobile() }}
+                </div>
             </div>
         </div>
     </div>
@@ -26,11 +29,11 @@
 
 {% macro render_search() %}
     {% if shuup.simple_search %}
-        <li>
+        <div>
             {% block searchform %}
                 {{ shuup.simple_search.get_search_form() }}
             {% endblock %}
-        </li>
+        </div>
     {% endif %}
 {% endmacro %}
 
@@ -87,7 +90,7 @@
             {% endif %}
             {% if shuup.urls.has_url("shuup:registration_register") %}
                 <li>
-                    <a href="{{ url("shuup:registration_register") }}{% if next %}?next={{next}}{% endif %}">
+                    <a href="{{ url("shuup:registration_register") }}{% if next %}?next={{ next }}{% endif %}">
                         <i class="fa fa-edit fa-fw"></i> {% trans %}New user? Register here!{% endtrans %}
                     </a>
                 </li>
@@ -145,7 +148,7 @@
             </a>
             <ul class="dropdown-menu languages" role="menu">
                 {% for (code, name, local_name) in languages %}
-                <li><a href="#" class="language" data-value="{{ code }}">{{ name }} ({{ local_name }})</a></li>
+                    <li><a href="#" class="language" data-value="{{ code }}">{{ name }} ({{ local_name }})</a></li>
                 {% endfor %}
             </ul>
         </li>
@@ -170,34 +173,34 @@
                             <col style="min-width: 90px;">
                         </colgroup>
                         <thead class="hidden-xs hidden-sm">
-                            <tr>
-                                <th>{% trans %}Items{% endtrans %}</th>
-                                <th class="text-right">{% trans %}Price{% endtrans %}</th>
-                            </tr>
+                        <tr>
+                            <th>{% trans %}Items{% endtrans %}</th>
+                            <th class="text-right">{% trans %}Price{% endtrans %}</th>
+                        </tr>
                         </thead>
                         <tfoot>
-                            <tr>
-                                <th>{% trans %}Total{% endtrans %}</th>
-                                <th class="text-right">{{ basket|total_price }}</th>
-                            </tr>
+                        <tr>
+                            <th>{% trans %}Total{% endtrans %}</th>
+                            <th class="text-right">{{ basket|total_price }}</th>
+                        </tr>
                         </tfoot>
                         <tbody class="hidden-xs hidden-sm">
-                            {% for line in lines %}
-                                <tr>
-                                    <td>
-                                        {% set line_url = shuup.urls.model_url(line.product) %}
-                                        {{ line.unit.render_quantity(line.quantity) }} &times;
-                                        {% if line_url %}
-                                            <a href="{{ line_url }}">{{ line.text|truncate(40, False) }}</a>
-                                        {% else %}
-                                            {{ line.text|truncate(40, False) }}
-                                        {% endif %}
-                                    </td>
-                                    {% if show_prices() and not xtheme.get("hide_prices") %}
-                                        <td class="text-right">{{ line|price }}</td>
+                        {% for line in lines %}
+                            <tr>
+                                <td>
+                                    {% set line_url = shuup.urls.model_url(line.product) %}
+                                    {{ line.unit.render_quantity(line.quantity) }} &times;
+                                    {% if line_url %}
+                                        <a href="{{ line_url }}">{{ line.text|truncate(40, False) }}</a>
+                                    {% else %}
+                                        {{ line.text|truncate(40, False) }}
                                     {% endif %}
-                                </tr>
-                            {% endfor %}
+                                </td>
+                                {% if show_prices() and not xtheme.get("hide_prices") %}
+                                    <td class="text-right">{{ line|price }}</td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
                         </tbody>
                     </table>
                     <a href="{{ url("shuup:basket") }}" class="btn btn-block btn-primary btn-view-cart">
@@ -233,7 +236,8 @@
     {% endif %}
     <div class="logo{% if not cropped_logo %} no-image{% endif %}">
         {% if cropped_logo %}
-            <a href="/" data-toggle="tooltip" data-placement="bottom" title="{{ request.shop }} {% trans %}Home{% endtrans %}" class="image">
+            <a href="/" data-toggle="tooltip" data-placement="bottom"
+               title="{{ request.shop }} {% trans %}Home{% endtrans %}" class="image">
                 <img src="{{ cropped_logo }}" alt="{{ request.shop }}">
             </a>
         {% else %}
@@ -244,17 +248,22 @@
 
 {% macro render_menu_items() %}
     <div>
-        <button class="toggle-mobile-nav">
-            <span class="sr-only">{% trans %}Menu{% endtrans %}</span>
-            <span class="hamburger"></span>
-        </button>
         <div class="pages">
             <ul class="nav-collapse">
-                <li{% if request.path == "/" %} class="current"{% endif %}><a href="/">{% trans %}Home{% endtrans %}</a></li>
+                <li{% if request.path == "/" %} class="current"{% endif %}><a href="/">{% trans %}Home{% endtrans %}</a>
+                </li>
                 {% set products_url = url('shuup:xtheme_extra_view', view='products') %}
-                <li{% if request.path == products_url %} class="current"{% endif %}><a href="{{ products_url }}">{% trans %}Products{% endtrans %}</a></li>
+                <li{% if request.path == products_url %} class="current"{% endif %}><a href="{{ products_url }}">
+                    {% trans %}Products{% endtrans %}</a></li>
                 {# See Classic Gray navigation.jinja for a example to rendering navigation links here #}
             </ul>
         </div>
     </div>
+{% endmacro %}
+
+{% macro render_button_mobile() %}
+    <button class="toggle-mobile-nav">
+        <span class="sr-only">{% trans %}Menu{% endtrans %}</span>
+        <span class="hamburger"></span>
+    </button>
 {% endmacro %}

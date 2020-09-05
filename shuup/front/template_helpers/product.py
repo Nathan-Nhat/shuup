@@ -17,6 +17,7 @@ from shuup.core.models import (
 from shuup.core.utils import context_cache
 from shuup.front.utils import cache as cache_utils
 from shuup.utils.text import force_ascii
+from shuup.front.templatetags.thumbnails import thumbnail
 
 
 def get_visible_attributes(product):
@@ -32,8 +33,8 @@ def get_products_bought_with(context, product, count=5):
     warnings.warn("Warning! Products bought with template helper is deprecated.", DeprecationWarning)
     related_product_cross_sells = set(
         ProductCrossSell.objects
-        .filter(product1=product, type=ProductCrossSellType.COMPUTED).values_list("product2_id", flat=True)
-        .order_by("-weight")[:(count * 4)])
+            .filter(product1=product, type=ProductCrossSellType.COMPUTED).values_list("product2_id", flat=True)
+            .order_by("-weight")[:(count * 4)])
 
     request = context["request"]
     customer = get_person_contact(request.user)
@@ -48,7 +49,7 @@ def is_visible(context, product):
     return shop_product.is_visible(request.customer)
 
 
-@contextfunction    # noqa (C901)
+@contextfunction  # noqa (C901)
 def get_product_cross_sells(
         context, product, relation_type=ProductCrossSellType.RELATED,
         count=4, orderable_only=True, use_variation_parents=False):
@@ -133,3 +134,11 @@ def map_relation_type(relation_type):
         return getattr(ProductCrossSellType, attr_name)
     except AttributeError:
         raise LookupError('Unknown ProductCrossSellType %r' % (relation_type,))
+
+
+@contextfunction
+def get_thumbnail_image(context, image_list):
+    list_thumbnail_image = []
+    for image in image_list:
+        list_thumbnail_image.append(thumbnail(image, size=(500, 500)))
+    return list_thumbnail_image

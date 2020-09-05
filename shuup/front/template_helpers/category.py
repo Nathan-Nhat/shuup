@@ -10,7 +10,6 @@ from jinja2.utils import contextfunction
 
 from shuup.core.models import Manufacturer
 
-
 @contextfunction
 def get_manufacturers(context):
     request = context["request"]
@@ -22,3 +21,5 @@ def get_manufacturers(context):
         .distinct()
     )
     return Manufacturer.objects.filter(pk__in=manufacturers_ids)
+
+

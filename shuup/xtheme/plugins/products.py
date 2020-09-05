@@ -72,10 +72,9 @@ class ProductHighlightPlugin(TemplatedPlugin):
             products = get_random_products(context, count, orderable_only)
         else:
             products = []
-
         return {
             "request": context["request"],
-            "title": self.get_translated_value("title"),
+            "title": self.config.get("title"),
             "products": products
         }
 

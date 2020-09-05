@@ -44,6 +44,9 @@
             {% placeholder "product_extra_2" %}{% endplaceholder %}
         </div>
     </div>
+    <script>
+        console.log({{ images }})
+    </script>
     {{ product_macros.render_product_detail_top_placeholder() }}
     {% if xtheme.get("show_product_detail_section", True) %}
         {{ product_macros.render_product_information(product) }}
